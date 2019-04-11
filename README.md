@@ -12,3 +12,4 @@ Repository untuk Project Riset Operasional
 - shinythemes
 - gridExtra
 - arules
+- scales
