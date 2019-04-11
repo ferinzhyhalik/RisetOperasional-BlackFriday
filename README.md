@@ -1,9 +1,9 @@
-# [Riset Operasional - Black Friday](https://www.kaggle.com/mehdidag/black-friday)
+# Riset Operasional - [Black Friday](https://www.kaggle.com/mehdidag/black-friday)
 Repository untuk Project Riset Operasional
 
 
 
-# Required R Packages
+### Required R Packages
 - shiny
 - tidyverse
 - readr
@@ -11,3 +11,4 @@ Repository untuk Project Riset Operasional
 - stringr
 - shinythemes
 - gridExtra
+- arules
