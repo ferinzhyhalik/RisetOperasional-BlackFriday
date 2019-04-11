@@ -1,5 +1,7 @@
-# RisetOperasional-BlackFriday
-Repository Riset Operasional Black Friday
+# [Riset Operasional - Black Friday](https://www.kaggle.com/mehdidag/black-friday)
+Repository untuk Project Riset Operasional
+
+
 
 # Required R Packages
 - shiny
