@@ -15,4 +15,4 @@ We use Machine Learning Apriori to predict costumer transactions, In other words
 - arules
 - scales
 
-based on : [***Black Friday Examined (EDA + Apriori)***](https://www.kaggle.com/dabate/black-friday-examined-eda-apriori/notebook)
+Based on : [***Black Friday Examined (EDA + Apriori)***](https://www.kaggle.com/dabate/black-friday-examined-eda-apriori/notebook)
