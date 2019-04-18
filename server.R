@@ -1,30 +1,10 @@
-library(arules)
-library(arulesViz)
-library(tidyverse)
-#source("data1.R")
-BlackFriday <- suppressMessages(read_csv("BlackFriday.csv"))
-options(scipen=10000)
-# Data Preprocessing
-# Getting the dataset into the correct format
-customers_products = BlackFriday %>%
-  select(User_ID, Product_ID) %>%   # Selecting the columns we will need
-  group_by(User_ID) %>%             # Grouping by "User_ID"          
-  arrange(User_ID) %>%              # Arranging by "User_ID" 
-  mutate(id = row_number()) %>%     # Defining a key column for each "Product_ID" and its corresponding "User_ID" (Must do this for spread() to work properly)
-  spread(User_ID, Product_ID) %>%   # Converting our dataset from tall to wide format, and grouping "Product_IDs" to their corresponding "User_ID"
-  t()                               # Transposing the dataset from columns of "User_ID" to rows of "User_ID"
-
-# Now we can remove the Id row we created earlier for spread() to work correctly.
-customers_products = customers_products[-1,]
-
-write.csv(customers_products, file = 'customers_products.csv')
-customersProducts = read.transactions('customers_products.csv', sep = ',', rm.duplicates = TRUE) # remove duplicates with rm.duplicates
-rules <- reactive({
-  
-  rules <- apriori(data = customersProducts, parameter = list(support = 0.008, confidence = 0.80, maxtime = 0)) # maxtime = 0 will allow our algorithim to run until completion with no time limit
-})
+source("data1.R")
 
 server <- function(input, output) {
+  reacRule <- reactive({
+    rules <- apriori(data = customersProducts, parameter = list(support = 0.008, confidence = 0.8, maxtime = 0)) # maxtime = 0 will allow our algorithim to run until completion with no time limit
+  })
+  ar <- reacRule()
   output$distPlot <- renderPlot({
     if(input$Plot == "Normal"){
       x    <- faithful$waiting
@@ -48,7 +28,7 @@ server <- function(input, output) {
       print(BlackFridayPurchase)
     }
     if(input$Plot == "Gender"){
-      if(input$Gender == "All"){
+      if(input$Gender == "Summary All"){
         PurchaseGender<-BlackFriday %>% group_by(Gender) %>% count() %>% ggplot(aes(x=Gender,y=n,fill=Gender))+geom_bar(stat="identity",position="dodge")+labs(x="",y="",fill="gender",title="Purchase by Gender")
         print(PurchaseGender)
       }
@@ -67,26 +47,74 @@ server <- function(input, output) {
         CityCatGend<-City %>% group_by(Gender,City_Category) %>% count() %>% ggplot(aes(x=as.factor(Gender),y=n,fill=as.factor(Gender)))+geom_bar(stat="identity",position="dodge")+labs(x="",y="",fill="gender",title="")
         print(CityCatGend)
       }
-    }
-    if(input$Plot == "City Category"){
-      if(input$City == "Summary All"){
+      if(input$Gender == "All"){
         PurchaseCityCat<-BlackFriday %>% group_by(Gender,City_Category) %>% count() %>% ggplot(aes(x=as.factor(City_Category),y=n,fill=as.factor(Gender)))+geom_bar(stat="identity",position="dodge")+labs(x="",y="",fill="Gender",title="City Resident")
         print(PurchaseCityCat)
       }
-      if(input$City == "Product City A"){
-        Product <- filter(BlackFriday, City_Category == "A")
-        ProdCatGend<-BlackFriday %>% group_by(Product_Category_1,City_Category) %>% count() %>% ggplot(aes(x=Product_Category_1,y=n,fill=as.factor(Product_Category_1)))+geom_bar(stat="identity",position="dodge")+theme(axis.text.x = element_text(angle = 0, vjust = 0.5), legend.position = "none")
-        print(ProdCatGend)
+    }
+    if(input$Plot == "City Category"){
+      if(input$prodcat == "Category 1"){
+        if(input$City == "All"){
+          PurchaseCityCat<-BlackFriday %>% group_by(Product_Category_1,City_Category) %>% count() %>% ggplot(aes(x=Product_Category_1,y=n,fill=as.factor(Product_Category_1)))+geom_bar(stat="identity",position="dodge")+labs(x="",y="",fill="Gender",title="City Resident")
+          print(PurchaseCityCat)
+        }
+        if(input$City == "Product City A"){
+          Product <- filter(BlackFriday, City_Category == "A")
+          ProdCatGend<-Product %>% group_by(Product_Category_1,City_Category) %>% count() %>% ggplot(aes(x=Product_Category_1,y=n,fill=as.factor(Product_Category_1)))+geom_bar(stat="identity",position="dodge")+theme(axis.text.x = element_text(angle = 0, vjust = 0.5), legend.position = "none")
+          print(ProdCatGend)
+        }
+        if(input$City == "Product City B"){
+          Product <- filter(BlackFriday, City_Category == "B")
+          ProdCatGend<-Product %>% group_by(Product_Category_1,City_Category) %>% count() %>% ggplot(aes(x=Product_Category_1,y=n,fill=as.factor(Product_Category_1)))+geom_bar(stat="identity",position="dodge")+theme(axis.text.x = element_text(angle = 5, vjust = 1), legend.position = "none")
+          print(ProdCatGend)
+        }
+        if(input$City == "Product City C"){
+          Product <- filter(BlackFriday, City_Category == "C")
+          ProdCatGend<-Product %>% group_by(Product_Category_1,City_Category) %>% count() %>% ggplot(aes(x=Product_Category_1,y=n,fill=as.factor(Product_Category_1)))+geom_bar(stat="identity",position="dodge")+theme(axis.text.x = element_text(angle = 5, vjust = 1), legend.position = "none")
+          print(ProdCatGend)
+        }
       }
-      if(input$City == "Product City B"){
-        Product <- filter(BlackFriday, City_Category == "B")
-        ProdCatGend<-BlackFriday %>% group_by(Product_Category_1,City_Category) %>% count() %>% ggplot(aes(x=Product_Category_1,y=n,fill=as.factor(Product_Category_1)))+geom_bar(stat="identity",position="dodge")+theme(axis.text.x = element_text(angle = 5, vjust = 1), legend.position = "none")
-        print(ProdCatGend)
+      if(input$prodcat == "Category 2"){
+        if(input$City == "All"){
+          PurchaseCityCat<-BlackFriday %>% group_by(Product_Category_2,City_Category) %>% count() %>% ggplot(aes(x=Product_Category_2,y=n,fill=as.factor(Product_Category_2)))+geom_bar(stat="identity",position="dodge")+labs(x="",y="",fill="Gender",title="City Resident")
+          print(PurchaseCityCat)
+        }
+        if(input$City == "Product City A"){
+          Product <- filter(BlackFriday, City_Category == "A")
+          ProdCatGend<-Product %>% group_by(Product_Category_2,City_Category) %>% count() %>% ggplot(aes(x=Product_Category_2,y=n,fill=as.factor(Product_Category_2)))+geom_bar(stat="identity",position="dodge")+theme(axis.text.x = element_text(angle = 0, vjust = 0.5), legend.position = "none")
+          print(ProdCatGend)
+        }
+        if(input$City == "Product City B"){
+          Product <- filter(BlackFriday, City_Category == "B")
+          ProdCatGend<-Product %>% group_by(Product_Category_2,City_Category) %>% count() %>% ggplot(aes(x=Product_Category_2,y=n,fill=as.factor(Product_Category_2)))+geom_bar(stat="identity",position="dodge")+theme(axis.text.x = element_text(angle = 5, vjust = 1), legend.position = "none")
+          print(ProdCatGend)
+        }
+        if(input$City == "Product City C"){
+          Product <- filter(BlackFriday, City_Category == "C")
+          ProdCatGend<-Product %>% group_by(Product_Category_2,City_Category) %>% count() %>% ggplot(aes(x=Product_Category_2,y=n,fill=as.factor(Product_Category_2)))+geom_bar(stat="identity",position="dodge")+theme(axis.text.x = element_text(angle = 5, vjust = 1), legend.position = "none")
+          print(ProdCatGend)
+        }
       }
-      if(input$City == "Product City C"){
-        Product <- filter(BlackFriday, City_Category == "C")
-        ProdCatGend<-BlackFriday %>% group_by(Product_Category_1,City_Category) %>% count() %>% ggplot(aes(x=Product_Category_1,y=n,fill=as.factor(Product_Category_1)))+geom_bar(stat="identity",position="dodge")+theme(axis.text.x = element_text(angle = 5, vjust = 1), legend.position = "none")
-        print(ProdCatGend)
+      if(input$prodcat == "Category 3"){
+        if(input$City == "All"){
+          PurchaseCityCat<-BlackFriday %>% group_by(Product_Category_3,City_Category) %>% count() %>% ggplot(aes(x=Product_Category_3,y=n,fill=as.factor(Product_Category_3)))+geom_bar(stat="identity",position="dodge")+labs(x="",y="",fill="Gender",title="City Resident")
+          print(PurchaseCityCat)
+        }
+        if(input$City == "Product City A"){
+          Product <- filter(BlackFriday, City_Category == "A")
+          ProdCatGend<-Product %>% group_by(Product_Category_3,City_Category) %>% count() %>% ggplot(aes(x=Product_Category_3,y=n,fill=as.factor(Product_Category_3)))+geom_bar(stat="identity",position="dodge")+theme(axis.text.x = element_text(angle = 0, vjust = 0.5), legend.position = "none")
+          print(ProdCatGend)
+        }
+        if(input$City == "Product City B"){
+          Product <- filter(BlackFriday, City_Category == "B")
+          ProdCatGend<-Product %>% group_by(Product_Category_3,City_Category) %>% count() %>% ggplot(aes(x=Product_Category_3,y=n,fill=as.factor(Product_Category_3)))+geom_bar(stat="identity",position="dodge")+theme(axis.text.x = element_text(angle = 5, vjust = 1), legend.position = "none")
+          print(ProdCatGend)
+        }
+        if(input$City == "Product City C"){
+          Product <- filter(BlackFriday, City_Category == "C")
+          ProdCatGend<-Product %>% group_by(Product_Category_3,City_Category) %>% count() %>% ggplot(aes(x=Product_Category_3,y=n,fill=as.factor(Product_Category_3)))+geom_bar(stat="identity",position="dodge")+theme(axis.text.x = element_text(angle = 5, vjust = 1), legend.position = "none")
+          print(ProdCatGend)
+        }
       }
     }
     if(input$Plot == "Marital Status"){
@@ -123,41 +151,77 @@ server <- function(input, output) {
         print(PurCityAge)
       }
     }
-    if(input$Plot == "Product Category 1 Gender"){
-      print(ProdCatGend)
+    if(input$Plot == "Product Category Gender"){
+      if(input$ProCatGen == "Category 1"){
+        ProdCatGend<-BlackFriday %>% group_by(Gender,Product_Category_1) %>% count() %>% ggplot(aes(x=as.factor(Product_Category_1),y=n,fill=as.factor(Gender)))+geom_bar(stat="identity",position="dodge")+labs(x="",y="",fill="gender",title="product category perference in gender")
+        print(ProdCatGend)
+      }
+      if(input$ProCatGen == "Category 2"){
+        ProdCatGend<-BlackFriday %>% group_by(Gender,Product_Category_2) %>% count() %>% ggplot(aes(x=as.factor(Product_Category_1),y=n,fill=as.factor(Gender)))+geom_bar(stat="identity",position="dodge")+labs(x="",y="",fill="gender",title="product category perference in gender")
+        print(ProdCatGend)
+      }
+      if(input$ProCatGen == "Category 3"){
+        ProdCatGend<-BlackFriday %>% group_by(Gender,Product_Category_3) %>% count() %>% ggplot(aes(x=as.factor(Product_Category_1),y=n,fill=as.factor(Gender)))+geom_bar(stat="identity",position="dodge")+labs(x="",y="",fill="gender",title="product category perference in gender")
+        print(ProdCatGend)
+      }
     }
-    if(input$Plot == "Price/Category"){
-      print(PriceperCat)
+    if(input$Plot == "Price"){
+      if(input$Price == "Category 1"){
+        PriceCat<-BlackFriday %>% ggplot(aes(x=reorder(as.factor(Product_Category_1),Purchase),y=Purchase))+geom_boxplot()+ggtitle("Price per category")
+        print(PriceCat)
+      }
+      if(input$Price == "Category 2"){
+        PriceCat<-BlackFriday %>% ggplot(aes(x=reorder(as.factor(Product_Category_2),Purchase),y=Purchase))+geom_boxplot()+ggtitle("Price per category")
+        print(PriceCat)
+      }
+      if(input$Price == "Category 3"){
+        PriceCat<-BlackFriday %>% ggplot(aes(x=reorder(as.factor(Product_Category_3),Purchase),y=Purchase))+geom_boxplot()+ggtitle("Price per category")
+        print(PriceCat)
+      }
+    }
+    if(input$Plot == "Stay in City"){
+      if(input$StayCity == "All"){
+        ProdMarStat<-BlackFriday %>% group_by(Stay_In_Current_City_Years,City_Category) %>% count() %>% ggplot(aes(x=as.factor(City_Category),y=n,fill=as.factor(Stay_In_Current_City_Years)))+geom_bar(stat="identity",position="dodge")+labs(x="",y="")
+        print(ProdMarStat)
+      }
+      if(input$StayCity == "City A"){
+        Product <- filter(BlackFriday, City_Category == "A")
+        ProdMarStat<-Product %>% group_by(Stay_In_Current_City_Years) %>% count() %>% ggplot(aes(x=Stay_In_Current_City_Years,y=n,fill=as.factor(Stay_In_Current_City_Years)))+geom_bar(stat="identity",position="dodge")+theme(axis.text.x = element_text(angle = 5, vjust = 1), legend.position = "none")
+        print(ProdMarStat)
+      }
+      if(input$StayCity == "City B"){
+        Product <- filter(BlackFriday, City_Category == "B")
+        ProdMarStat<-Product %>% group_by(Stay_In_Current_City_Years) %>% count() %>% ggplot(aes(x=Stay_In_Current_City_Years,y=n,fill=as.factor(Stay_In_Current_City_Years)))+geom_bar(stat="identity",position="dodge")+theme(axis.text.x = element_text(angle = 5, vjust = 1), legend.position = "none")
+        print(ProdMarStat)
+      }
+      if(input$StayCity == "City C"){
+        Product <- filter(BlackFriday, City_Category == "C")
+        ProdMarStat<-Product %>% group_by(Stay_In_Current_City_Years) %>% count() %>% ggplot(aes(x=Stay_In_Current_City_Years,y=n,fill=as.factor(Stay_In_Current_City_Years)))+geom_bar(stat="identity",position="dodge")+theme(axis.text.x = element_text(angle = 5, vjust = 1), legend.position = "none")
+        print(ProdMarStat)
+      }
     }
   })
-  rulesTable <- reactive({
-    ar <- rules()
-    data.frame(
-      lhs = labels(lhs(ar)),
-      rhs = labels(rhs(ar)), 
-      rules@quality)
-  })
-  output$predTab <- renderTable({
-    rulesTable()
+  output$rulesDataTable <- renderPrint({
+    inspect(sort(ar, by='lift'))
   })
   output$groupedPlot <- renderPlot({
-    ar <- rules()
+    #ar <- reacRule()
     plot(ar, method = 'grouped')
   })
   output$graphPlot <- renderPlot({
-    ar <- rules()
+    #ar <- reacRule()
     plot(ar, method = 'graph')
   })
   output$scatterPlot <- renderPlot({
-    ar <- rules()
+    #ar <- reacRule()
     plot(ar, method = 'scatter')
   })
   output$paracoordPlot <- renderPlot({
-    ar <- rules()
+    #ar <- reacRule()
     plot(ar, method = 'paracoord')
   })
   output$matrixPlot <- renderPlot({
-    ar <- rules()
+    #ar <- reacRule()
     plot(ar, method = 'matrix')
   })
 }
