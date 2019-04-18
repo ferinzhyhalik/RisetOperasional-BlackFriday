@@ -12,7 +12,7 @@ ui <- fluidPage(
       selectInput("Plot", "Please Select What Plot to Show", 
                   choices = c("Normal", "Top Product", "Purchase", 
                               "Gender", "City Category", "Marital Status", 
-                              "Age", "Product Category 1 Gender", "Price/Category")),
+                              "Age", "Product Category Gender", "Price", "Stay in City")),
       
       sliderInput("Confidence", "Please Adjust The COnfidence",
                   min = 0.1, max = 0.9, step = 0.05, value = 0.8),
@@ -38,7 +38,7 @@ ui <- fluidPage(
       conditionalPanel(condition ="input.Plot == 'Gender'",
                        # Input : select input the type
                        selectInput("Gender", "Which City",
-                                   choices = c("All", "City A", "City B", "City C"))
+                                   choices = c("All", "City A", "City B", "City C", "Summary All"))
       ),
       conditionalPanel(condition ="input.Plot == 'City Category'",
                        # Input : select input the type
@@ -49,13 +49,28 @@ ui <- fluidPage(
                        # Input : select input the type
                        selectInput("MarStatus", "Which Type",
                                    choices = c("All", "Product Marital Status 1", "Product Marital Status 0", "Summary Product")),
-                       sliderInput("Top_Product", "Number_of_Product", 
-                                   min = 1, max = 100, value = 10, step = 1)
+                       selectInput("prodcat", "Which Type",
+                                   choices = c("Category 1", "Category 2", "Category 3"))
       ),
       conditionalPanel(condition ="input.Plot == 'Age'",
                        # Input : select input the type
                        selectInput("Age", "Which Type",
                                    choices = c("All", "All Male", "All Female"))
+      ),
+      conditionalPanel(condition ="input.Plot == 'Price'",
+                       # Input : select input the type
+                       selectInput("Price", "Which Category",
+                                   choices = c("Category 1", "Category 2", "Category 3"))
+      ),
+      conditionalPanel(condition ="input.Plot == 'Product Category Gender'",
+                       # Input : select input the type
+                       selectInput("ProCatGen", "Which Category",
+                                   choices = c("Category 1", "Category 2", "Category 3"))
+      ),
+      conditionalPanel(condition ="input.Plot == 'Stay in City'",
+                       # Input : select input the type
+                       selectInput("StayCity", "Which Category",
+                                   choices = c("All", "City A", "City B", "City C"))
       )
     ),
     # Main panel for displaying outputs ----
@@ -63,11 +78,11 @@ ui <- fluidPage(
               tabsetPanel(
                 tabPanel("Data Exploration", plotOutput("distPlot")),
                 tabPanel("Prediction Table", tableOutput("predTab")),
-                tabPanel('Grouped', value='grouped', plotOutput("groupedPlot", width='100%', height='100%')),
-                tabPanel('Graph', value='graph', plotOutput("graphPlot", width='100%', height='100%')),
-                tabPanel('Scatter', value='scatter', plotOutput("scatterPlot", width='100%', height='100%')),
-                tabPanel('Parallel Coordinates', value='paracoord', plotOutput("paracoordPlot", width='100%', height='100%')),
-                tabPanel('Matrix', value='matrix', plotOutput("matrixPlot", width='100%', height='100%'))
+                tabPanel('Grouped', value='grouped', plotOutput("groupedPlot")),
+                tabPanel('Graph', value='graph', plotOutput("graphPlot")),
+                tabPanel('Scatter', value='scatter', plotOutput("scatterPlot")),
+                tabPanel('Parallel Coordinates', value='paracoord', plotOutput("paracoordPlot")),
+                tabPanel('Matrix', value='matrix', plotOutput("matrixPlot"))
               )
               )
   )
