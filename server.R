@@ -4,16 +4,6 @@ server <- function(input, output) {
   reacRule <- reactive({
     rules <- apriori(data = customersProducts, parameter = list(support = 0.008, confidence = 0.8, maxtime = 0)) # maxtime = 0 will allow our algorithim to run until completion with no time limit
   })
-  ar <- reacRule()
-  output$distPlot <- renderPlot({
-    if(input$Plot == "Normal"){
-      x    <- faithful$waiting
-      bins <- seq(min(x), max(x), length.out = input$bins + 1)
-      
-      hist(x, breaks = bins, col = "#75AADB", border = "black",
-           xlab = "Waiting time to next eruption (in mins)",
-           main = "Histogram of waiting times")
-    }
     if(input$Plot == "Top Product"){
       BlackFridayTopProd <- BlackFriday %>% group_by(Product_ID) %>% count() %>% arrange(desc(n))
       Top_Product <- head(BlackFridayTopProd, input$Product)
@@ -202,26 +192,27 @@ server <- function(input, output) {
     }
   })
   output$rulesDataTable <- renderPrint({
+    ar <- reacRule()
     inspect(sort(ar, by='lift'))
   })
   output$groupedPlot <- renderPlot({
-    #ar <- reacRule()
+    ar <- reacRule()
     plot(ar, method = 'grouped')
   })
   output$graphPlot <- renderPlot({
-    #ar <- reacRule()
+    ar <- reacRule()
     plot(ar, method = 'graph')
   })
   output$scatterPlot <- renderPlot({
-    #ar <- reacRule()
+    ar <- reacRule()
     plot(ar, method = 'scatter')
   })
   output$paracoordPlot <- renderPlot({
-    #ar <- reacRule()
+    ar <- reacRule()
     plot(ar, method = 'paracoord')
   })
   output$matrixPlot <- renderPlot({
-    #ar <- reacRule()
+    ar <- reacRule()
     plot(ar, method = 'matrix')
   })
 }
