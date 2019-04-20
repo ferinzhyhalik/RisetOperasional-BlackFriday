@@ -10,20 +10,15 @@ ui <- fluidPage(
     # Sidebar panel for inputs ----
     sidebarPanel(
       selectInput("Plot", "Please Select What Plot to Show", 
-                  choices = c("Normal", "Top Product", "Purchase", 
+                  choices = c("Top Product", "Purchase", 
                               "Gender", "City Category", "Marital Status", 
                               "Age", "Product Category Gender", "Price", "Stay in City")),
       
-      sliderInput("Confidence", "Please Adjust The COnfidence",
+      sliderInput("Confidence", "Please Adjust The Confidence",
                   min = 0.1, max = 0.9, step = 0.05, value = 0.8),
       
       sliderInput("Support", "Please Adjust The Support",
                   min = 0.006, max = 0.01, step = 0.0002, value = 0.008),
-      
-      conditionalPanel(condition = "input.Plot == 'Normal'",
-                       # Input: Slider for the number of bins ----
-                       sliderInput(inputId = "bins", label = "Number of bins:",
-                                   min = 1, max = 50, value = 30)),
       
       conditionalPanel(condition ="input.Plot == 'Top Product'",
                        # Input : Slider for the number of Top Product
