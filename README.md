@@ -6,13 +6,14 @@ We use Machine Learning Apriori to predict costumer transactions, In other words
 
 ### Required R Packages
 - shiny
-- tidyverse
 - readr
+- tidyverse
 - GGally
-- stringr
-- shinythemes
 - gridExtra
 - arules
 - scales
+- stringr
+- shinythemes
+
 
 Based on : [***Black Friday Examined (EDA + Apriori)***](https://www.kaggle.com/dabate/black-friday-examined-eda-apriori/notebook)
