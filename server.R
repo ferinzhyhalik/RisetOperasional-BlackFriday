@@ -190,4 +190,30 @@ server <- function(input, output) {
         print(ProdMarStat)
       }
     }
+    })
+  output$rulesDataTable <- renderPrint({
+    ar <- reacRule()
+    inspect(sort(ar, by='lift'))
+  })
+  output$groupedPlot <- renderPlot({
+    ar <- reacRule()
+    plot(ar, method = 'grouped')
+  })
+  output$graphPlot <- renderPlot({
+    ar <- reacRule()
+    plot(ar, method = 'graph')
+  })
+  output$scatterPlot <- renderPlot({
+    ar <- reacRule()
+    plot(ar, method = 'scatter')
+  })
+  output$paracoordPlot <- renderPlot({
+    ar <- reacRule()
+    plot(ar, method = 'paracoord')
+  })
+  output$matrixPlot <- renderPlot({
+    ar <- reacRule()
+    plot(ar, method = 'matrix')
+  })
+}
 
